@@ -96,10 +96,14 @@
   
   /* 확대 이미지 스타일 */
   .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
+    width: auto;
+    height: auto;
+    transform: scale(2);  /* 두 배 확대 */
+    max-width: none;      /* 제한 없앰 */
+    max-height: none;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
   }
   
   /* Lightbox 표시 */
@@ -119,10 +123,8 @@
     <a href="#" style="position:absolute; top:20px; right:20px; font-size:30px; color:white; text-decoration:none;">✕</a>
     <img src="Floor_Plan_Table.jpg" alt="Wedding Floor Plan">
   </div>
-    
-  <!-- 플로어 플랜 이미지 -->
-  
 
+  
   <script>
   const guests = [
   // Table 1
@@ -319,6 +321,7 @@
   </script>
 </body>
 </html>
+
 
 
 
