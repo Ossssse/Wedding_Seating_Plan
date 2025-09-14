@@ -84,26 +84,33 @@
   <style>
   /* 전체 화면 배경 */
   .lightbox {
-    display: none; /* 기본 숨김 */
-    position: fixed;
-    z-index: 1000;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    justify-content: center;
-    align-items: center;
+  display: none; /* 기본 숨김 */
+  position: fixed;
+  z-index: 1000;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  padding: 10px; /* 모바일 여백 */
+  box-sizing: border-box;
   }
   
   /* 확대 이미지 스타일 */
   .lightbox img {
     width: auto;
     height: auto;
-    transform: scale(2);  /* 두 배 확대 */
-    max-width: none;      /* 제한 없앰 */
-    max-height: none;
+    max-width: 90%;   /* 화면 폭에 맞춤 */
+    max-height: 90%;  /* 화면 높이에 맞춤 */
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     transition: transform 0.3s ease;
+    cursor: zoom-in;
+  }
+  
+  /* 두 배 확대 on hover/click for desktop */
+  .lightbox img:active {
+    transform: scale(2); 
   }
   
   /* Lightbox 표시 */
@@ -321,6 +328,7 @@
   </script>
 </body>
 </html>
+
 
 
 
