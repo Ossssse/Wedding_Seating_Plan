@@ -102,11 +102,25 @@
     height: auto;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    transform: scale(1); /* 0% 확대 */
+    transform: scale(1.1); /* 0% 확대 */
     cursor: grab;
     touch-action: none;
   }
-  
+
+
+      
+  /* 모바일 화면에서는 확대 제거, 화면 비율 맞춤 */
+  @media (max-width: 768px) {
+    .lightbox img {
+      transform: scale(1);   /* 확대 제거 */
+      width: 90vw;           /* 화면 너비 기준 */
+      height: auto;
+      max-height: 90vh;
+    }
+  }
+
+
+    
   .lightbox:target {
     display: flex;
   }
@@ -356,6 +370,7 @@
   </script>
 </body>
 </html>
+
 
 
 
