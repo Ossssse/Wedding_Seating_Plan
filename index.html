@@ -19,7 +19,7 @@
     }
     input {
       padding: 12px;
-      font-size: 1rem;
+      font-size: 1.3rem;
       width: 90%;
       max-width: 400px;
       border-radius: 10px;
@@ -29,7 +29,7 @@
     }
     .result {
       margin-top: 10px;
-      font-size: 1rem;
+      font-size: 1.3rem;
     }
     .guest-item {
       margin: 10px auto;
@@ -57,7 +57,7 @@
         font-size: 1.2rem;
       }
       input {
-        font-size: 0.95rem;
+        font-size: 1.3rem;
         padding: 10px;
       }
       .guest-item {
@@ -264,7 +264,7 @@
 
     if (matches.length > 0) {
       resultDiv.innerHTML = matches.map(g =>
-        `<div class="guest-item">✨ ${g.name}<br/>Seat: <strong>${g.table}</strong>, ${g.seat}</div>`
+        `<div class="guest-item">➔ ${g.name}<br/>Seat: <strong>${g.table}</strong>, <strong>${g.seat}</strong></div>`
       ).join("");
     } else {
       resultDiv.innerHTML = `<span style="color:#cc0000;">No matching names found.</span>`;
@@ -273,6 +273,7 @@
   </script>
 </body>
 </html>
+
 
 
 
