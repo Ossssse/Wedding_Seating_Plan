@@ -73,13 +73,55 @@
   <!-- 검색창 -->
   <input type="text" id="searchBox" placeholder="Enter your name..." onkeyup="searchGuest()"/>
   <div id="result" class="result"></div>
-
-  <div style="text-align: center; font-size: 20px; margin-bottom: 10px; font-weight: bold;">
+  
+  <!-- 안내 문구 -->
+  <div style="text-align: center; font-size: 16px; margin-bottom: 10px; font-weight: bold;">
   🪑 Seats arranged clockwise from the north.
   </div>
+
+
+  <!-- Lightbox CSS -->
+  <style>
+  /* 전체 화면 배경 */
+  .lightbox {
+    display: none; /* 기본 숨김 */
+    position: fixed;
+    z-index: 1000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+  }
   
-  <!-- 플로어 플랜 이미지 -->
-  <img src="Floor_Plan_Table.jpg" alt="Wedding Seating Floor Plan"/>
+  /* 확대 이미지 스타일 */
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+  
+  /* Lightbox 표시 */
+  .lightbox:target {
+    display: flex;
+  }
+  </style>
+  
+  <!-- 플로어 플랜 썸네일 -->
+  <a href="#floorplan">
+    <img src="floorplan.jpg" alt="Wedding Floor Plan" style="width: 100%; max-width: 600px; cursor: zoom-in; border-radius: 8px;">
+  </a>
+  
+  <!-- Lightbox 확대 이미지 -->
+  <div id="floorplan" class="lightbox">
+    <!-- 닫기 버튼 -->
+    <a href="#" style="position:absolute; top:20px; right:20px; font-size:30px; color:white; text-decoration:none;">✕</a>
+    <img src="floorplan.jpg" alt="Wedding Floor Plan">
+  </div>
+    
+   // <!-- 플로어 플랜 이미지 -->
+  //  <img src="Floor_Plan_Table.jpg" alt="Wedding Seating Floor Plan"/>
 
   <script>
   const guests = [
@@ -277,6 +319,7 @@
   </script>
 </body>
 </html>
+
 
 
 
