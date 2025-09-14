@@ -84,33 +84,30 @@
   <style>
   /* 전체 화면 배경 */
   .lightbox {
-  display: none; /* 기본 숨김 */
-  position: fixed;
-  z-index: 1000;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
-  justify-content: center;
-  align-items: center;
-  padding: 10px; /* 모바일 여백 */
-  box-sizing: border-box;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none; /* 터치 드래그 허용 */
   }
   
   /* 확대 이미지 스타일 */
   .lightbox img {
     width: auto;
     height: auto;
-    max-width: 90%;   /* 화면 폭에 맞춤 */
-    max-height: 90%;  /* 화면 높이에 맞춤 */
+    max-width: 90%;
+    max-height: 90%;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    transition: none;
-    cursor: default;
-  }
-  
-  /* 두 배 확대 on hover/click for desktop */
-  .lightbox img:active {
-    transform: scale(2); 
+    transform: scale(1.2); /* 20% 확대 */
+    cursor: grab;
+    transition: transform 0.3s ease;
+    touch-action: none;
   }
   
   /* Lightbox 표시 */
@@ -131,6 +128,39 @@
     <img src="Floor_Plan_Table.jpg" alt="Wedding Floor Plan">
   </div>
 
+  <!-- 이미지 드래그 이동 JS -->
+  <script>
+  const img = document.getElementById('zoomImg');
+  let isDragging = false;
+  let startX, startY, currentX = 0, currentY = 0;
+  
+  img.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    startX = e.clientX - currentX;
+    startY = e.clientY - currentY;
+    img.style.cursor = 'grabbing';
+    img.setPointerCapture(e.pointerId);
+  });
+  
+  img.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    currentX = e.clientX - startX;
+    currentY = e.clientY - startY;
+    img.style.transform = `scale(1.2) translate(${currentX}px, ${currentY}px)`;
+  });
+  
+  img.addEventListener('pointerup', (e) => {
+    isDragging = false;
+    img.style.cursor = 'grab';
+  });
+  
+  img.addEventListener('pointerleave', (e) => {
+    isDragging = false;
+    img.style.cursor = 'grab';
+  });
+  </script>
+  
+  
   
   <script>
   const guests = [
@@ -328,6 +358,7 @@
   </script>
 </body>
 </html>
+
 
 
 
