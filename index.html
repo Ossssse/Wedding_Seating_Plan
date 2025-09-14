@@ -264,7 +264,7 @@
 
     if (matches.length > 0) {
       resultDiv.innerHTML = matches.map(g =>
-        `<div class="guest-item">👉 ${g.name}<br/><span style="margin-left:20px;"><strong>🍽️ ${g.table}</strong>, <strong>🪑 ${g.seat}</strong></span></div>`
+        `<div class="guest-item"><strong>${g.name}</strong><br/><span style="margin-left:40px;">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
       ).join("");
     } else {
       resultDiv.innerHTML = `<span style="color:#cc0000;">No matching names found.</span>`;
@@ -273,6 +273,7 @@
   </script>
 </body>
 </html>
+
 
 
 
