@@ -301,38 +301,6 @@
     return html;
   }
 
-  // --- Pin layers ---
-  const pinLayer = document.getElementById('pinLayer');
-  const pinLayerDialog = document.getElementById('pinLayerDialog');
-  const defaultPins = {
-    'Table 1': {x:12, y:18}, 'Table 2': {x:24, y:18}, 'Table 3': {x:36, y:18}, 'Table 4': {x:48, y:18},
-    'Table 5': {x:60, y:18}, 'Table 6': {x:72, y:18}, 'Table 7': {x:84, y:18},
-    'Table 8': {x:12, y:40}, 'Table 9': {x:24, y:40}, 'Table 10': {x:36, y:40}, 'Table 11': {x:48, y:40},
-    'Table 12': {x:60, y:40}, 'Table 13': {x:72, y:40}, 'Table 14': {x:84, y:40},
-    'Table 15': {x:24, y:66}, 'Table 16': {x:44, y:66}, 'Table 17': {x:64, y:66}, 'Table 18': {x:84, y:66},
-  };
-  let pins = { ...defaultPins, ...(JSON.parse(localStorage.getItem('tablePins')||'{}')) };
-
-  function renderPinLayer(layer){
-    if(!layer) return;
-    layer.innerHTML = Object.entries(pins).map(([tbl, p])=>
-      `<div class="pin" data-table="${tbl}" style="left:${p.x}%; top:${p.y}%">
-         <div class="label">${tbl}</div>
-         <div class="dot"></div>
-       </div>`
-    ).join('');
-  }
-  function refreshPins(){ renderPinLayer(pinLayer); renderPinLayer(pinLayerDialog); }
-  refreshPins();
-
-  function highlightTable(table){
-    document.querySelectorAll('.pin.highlight').forEach(el=> el.classList.remove('highlight'));
-    const pin = document.querySelector(`#pinLayer .pin[data-table="${table}"]`);
-    if(pin) pin.classList.add('highlight');
-    const pinDlg = document.querySelector(`#pinLayerDialog .pin[data-table="${table}"]`);
-    if(pinDlg) pinDlg.classList.add('highlight');
-  }
-
   function search(){
     const raw = inputEl.value; const q = norm(raw);
     if(!q){ render([], ''); return; }
@@ -351,7 +319,6 @@
 
     const results = guests.filter(g=> strictPass(g.name)).slice(0,1);
     render(results, raw);
-    if(results.length){ highlightTable(results[0].table); }
   }
 
   function render(matches, query){
@@ -364,6 +331,13 @@
 
   let t; inputEl.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 80); });
   clearBtn.addEventListener('click', ()=>{ inputEl.value=''; inputEl.focus(); search(); });
+
+  // --- Pin highlight logic --- (간단 버전)
+  function highlightTable(table){
+    document.querySelectorAll('.pin.highlight').forEach(el=> el.classList.remove('highlight'));
+    const pin = document.querySelector(`#pinLayer .pin[data-table=\\"${table}\\"]`);
+    if(pin) pin.classList.add('highlight');
+  }
   </script>
 </body>
 </html>
