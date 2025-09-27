@@ -20,6 +20,10 @@
     h1{font-size:clamp(1.25rem,2.5vw,1.8rem);margin:0 0 14px;line-height:1.35}
     p.lead{margin:0 0 16px;color:var(--muted)}
     .searchbar{display:flex;gap:8px;justify-content:center;align-items:center;margin:12px 0 10px}
+    .clear-inline{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #e5e1db;border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}
+    .clear-inline input{border:none;outline:none;font-size:1.1rem}
+    .btn-clear{display:none;margin-left:6px;border:none;background:#f1ebe5;color:#4b4239;border-radius:8px;padding:6px 10px;font-size:.95rem;cursor:pointer}
+    .btn-clear.show{display:inline-block}
     label{position:absolute;clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;white-space:nowrap;width:1px}
     input[type="text"]{
       padding:12px 14px;font-size:1.1rem;width:min(90%,480px);border-radius:12px;border:1px solid #ccc;outline:none;
@@ -36,7 +40,7 @@
 
     /* Results overlay over the image */
     .overlay{position:absolute;left:8px;right:8px;top:8px;max-height:45vh;overflow:auto;padding:8px 8px 30px;border-radius:12px;background:var(--overlay);backdrop-filter:saturate(150%) blur(2px);box-shadow:var(--shadow);text-align:left}
-    .overlay .clear-btn{position:absolute;top:6px;right:10px;background:none;border:none;font-size:28px;font-weight:bold;color:#333;cursor:pointer;line-height:1}
+    .overlay .clear-btn{position:absolute;top:6px;right:10px;background:none;border:none;font-size:20px;font-weight:bold;color:#333;cursor:pointer;line-height:1}
     .overlay .clear-btn:hover{color:#000}
 
     .result{font-size:1.05rem;margin-top:26px}
@@ -66,11 +70,14 @@
 <body>
   <div class="wrap">
     <h1>Seijin & Jiwon Wedding Seating Plan 👰❤️🤵</h1>
-    <p class="lead">Welcome! Find your table and seat.</p>
+    <p class="lead">Find your table and seat. Welcome & congratulations! ✨</p>
 
     <div class="searchbar">
-      <label for="searchBox">Search your name</label>
-      <input id="searchBox" type="text" inputmode="text" autocomplete="name" placeholder="Enter your name…" aria-controls="result" aria-autocomplete="list" aria-describedby="help" autofocus />
+      <div class="clear-inline">
+        <label for="searchBox">Search your name</label>
+        <input id="searchBox" type="text" inputmode="text" autocomplete="name" placeholder="Enter your name…" aria-controls="result" aria-autocomplete="list" aria-describedby="help" autofocus />
+        <button id="clearInput" class="btn-clear" type="button" aria-label="Clear search">Clear</button>
+      </div>
     </div>
 
     <div class="meta-row" id="help">
@@ -106,10 +113,10 @@ const guests = window.GUESTS || [];
 const $ = sel => document.querySelector(sel);
 const resultDiv = $('#result');
 const overlay = $('#overlay');
-const clearBtn = $('#clearBtn');           // 오버레이 X
+const clearBtn = $('#clearBtn');
 const countPill = $('#count');
 const box = $('#searchBox');
-const clearInlineBtn = $('#clearInput');   // 입력창 옆 Clear
+const clearInlineBtn = $('#clearInput');
 
 const norm = s => (s||"")
   .toLowerCase()
@@ -160,14 +167,9 @@ countPill.textContent = `${guests.length} guests`;
 
 function searchGuest(){
   const q = norm(box.value);
-  if(!q){
-    resultDiv.innerHTML='';
-    overlay.hidden = true;
-    if (clearInlineBtn) clearInlineBtn.classList.remove('show'); // 입력 비었을 때 버튼 숨김
-    return;
-  }
+  if(!q){ resultDiv.innerHTML=''; overlay.hidden = true; if (clearInlineBtn) clearInlineBtn.classList.remove('show'); return; }
 
-  if (clearInlineBtn) clearInlineBtn.classList.add('show');      // 입력 있을 때 버튼 노출
+  if (clearInlineBtn) clearInlineBtn.classList.add('show');
 
   const scored = guests.map(g=>{
     const nameN = norm(g.name);
@@ -181,7 +183,7 @@ function searchGuest(){
     .sort((a,b)=> a.score-b.score || a.name.localeCompare(b.name));
 
   if(scored.length===0){
-    resultDiv.innerHTML = `<span style="color:#cc0000">No matching names found.</span>`;
+    resultDiv.innerHTML = `<span style=\"color:#cc0000\">No matching names found.</span>`;
     overlay.hidden = false;
     return;
   }
@@ -190,9 +192,9 @@ function searchGuest(){
   const qRaw = box.value.trim();
   const html = grouped.map(([table, items])=>{
     const itemsHtml = items.map(g=>
-      `<div class="guest-item"><strong>${highlight(g.name, qRaw)}</strong><span class="seat">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
+      `<div class=\"guest-item\"><strong>${highlight(g.name, qRaw)}</strong><span class=\"seat\">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
     ).join('');
-    return `<div class="group"><h3>${table}</h3>${itemsHtml}</div>`;
+    return `<div class=\"group\"><h3>${table}</h3>${itemsHtml}</div>`;
   }).join('');
 
   resultDiv.innerHTML = html;
@@ -206,16 +208,16 @@ function clearSearch(){
   resultDiv.innerHTML='';
   overlay.hidden=true;
   if (clearInlineBtn) clearInlineBtn.classList.remove('show');
-  // URL의 ?q 제거
   const url = new URL(location);
   url.searchParams.delete('q');
   history.replaceState({}, '', url);
   box.focus();
 }
 
-clearBtn.addEventListener('click', clearSearch);                  // 오버레이 X
-if (clearInlineBtn) clearInlineBtn.addEventListener('click', clearSearch); // 입력창 Clear
+clearBtn.addEventListener('click', clearSearch);
+if (clearInlineBtn) clearInlineBtn.addEventListener('click', clearSearch);
 box.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ e.preventDefault(); clearSearch(); } });
+});
 
 (function initFromURL(){
   const params = new URLSearchParams(location.search);
@@ -243,7 +245,7 @@ box.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ e.preventDefault();
 
   const clampScale = (s)=>{
     const isMobile = matchMedia('(max-width: 768px)').matches;
-    const max = isMobile ? 3 : 5;   // 최대 배율 (모바일/데스크탑)
+    const max = isMobile ? 3 : 5;
     return Math.min(max, Math.max(1, s));
   };
 
@@ -332,8 +334,3 @@ box.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ e.preventDefault();
 </script>
 </body>
 </html>
-
-
-
-
-
