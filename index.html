@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Wedding Seating Plan</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #fdf8f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    input {
+      padding: 12px;
+      font-size: 1.3rem;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+    .result {
+      margin-top: 10px;
+      font-size: 1.3rem;
+    }
+    .guest-item {
+      margin: 10px auto;
+      padding: 14px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      max-width: 500px;
+      text-align: left;
+    }
+    .guest-item strong {
+      color: #444;
+    }
+    img {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* 모바일 작은 화면 전용 */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+      }
+      input {
+        font-size: 1.3rem;
+        padding: 10px;
+      }
+      .guest-item {
+        font-size: 1.3rem;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Seijin & Jiwon Wedding Seating Plan 👰❤️🤵</h1>
+
+  <!-- 검색창 -->
+  <input type="text" id="searchBox" placeholder="Enter your name..." onkeyup="searchGuest()"/>
+  <div id="result" class="result"></div>
+  
+  <!-- 안내 문구 -->
+  <div style="text-align: center; font-size: 16px; font-style: italic; margin-bottom: 10px; font-weight: bold;">
+  *Seats arranged clockwise from the north 🪑
+  </div>
+
+
+   <!-- Lightbox CSS -->
+  <style>
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .lightbox img {
+    position: relative; /* translate 대신 좌표 이동 */
+    max-width: none; /* 화면보다 커도 허용 */
+    max-height: none;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transform: scale(.8); /* 80%로 축소 */
+    cursor: grab;
+    touch-action: none;
+  }
+
+
+      
+  /* 모바일 화면에서는 확대 제거, 화면 비율 맞춤 */
+  @media (max-width: 768px) {
+    .lightbox img {
+      transform: scale(2.7);   /* 270% 확대 */
+      width: 90vw;           /* 화면 너비 기준 */
+      height: auto;
+      max-height: 90vh;
+    }
+  }
+
+
+    
+  .lightbox:target {
+    display: flex;
+  }
+  </style>
+  
+  <!-- 플로어 플랜 썸네일 -->
+  <a href="#floorplan">
+    <img src="Seating_Plan.jpg" alt="Wedding Floor Plan" style="width: 100%; max-width: 600px; cursor: zoom-in; border-radius: 8px;">
+  </a>
+  
+  <!-- Lightbox -->
+  <div id="floorplan" class="lightbox">
+    <a href="#" style="position:absolute; top:20px; right:20px; font-size:30px; color:white; text-decoration:none; z-index:1010;">✕</a>
+    <img id="zoomImg" src="Seating_Plan.jpg" alt="Wedding Floor Plan">
+  </div>
+  
+  <!-- Pan JS -->
+  <script>
+  const img = document.getElementById('zoomImg');
+  let isDragging = false;
+  let startX, startY;
+  let currentX = 0, currentY = 0;
+  
+  img.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    isDragging = true;
+    startX = e.clientX - currentX;
+    startY = e.clientY - currentY;
+    img.style.cursor = 'grabbing';
+    img.setPointerCapture(e.pointerId);
+  });
+  
+  img.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    currentX = e.clientX - startX;
+    currentY = e.clientY - startY;
+    img.style.left = currentX + 'px';
+    img.style.top = currentY + 'px';
+  });
+  
+  img.addEventListener('pointerup', (e) => {
+    isDragging = false;
+    img.style.cursor = 'grab';
+  });
+  
+  img.addEventListener('pointerleave', (e) => {
+    isDragging = false;
+    img.style.cursor = 'grab';
+  });
+  </script>
+  
+<script src="data/guests.js"></script>
+<script>
+  const guests = window.GUESTS || [];  
+
+  function searchGuest() {
+    const input = document.getElementById("searchBox").value.toLowerCase().trim();
+    const resultDiv = document.getElementById("result");
+
+    if (!input) {
+      resultDiv.innerHTML = "";
+      return;
+    }
+
+    // 입력값으로 시작하는 모든 이름 찾기 (대소문자 무시)
+    const matches = guests.filter(g => g.name.toLowerCase().startsWith(input));
+
+    if (matches.length > 0) {
+      resultDiv.innerHTML = matches.map(g =>
+        `<div class="guest-item"><strong>${g.name}</strong><br/><span style="margin-left:40px;">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
+      ).join("");
+    } else {
+      resultDiv.innerHTML = `<span style="color:#cc0000;">No matching names found.</span>`;
+    }
+  }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
