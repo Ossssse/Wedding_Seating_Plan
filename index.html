@@ -217,7 +217,6 @@ function clearSearch(){
 clearBtn.addEventListener('click', clearSearch);
 if (clearInlineBtn) clearInlineBtn.addEventListener('click', clearSearch);
 box.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ e.preventDefault(); clearSearch(); } });
-);
 
 (function initFromURL(){
   const params = new URLSearchParams(location.search);
@@ -334,6 +333,7 @@ box.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ e.preventDefault();
 </script>
 </body>
 </html>
+
 
 
 
