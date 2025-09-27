@@ -7,12 +7,14 @@
   <meta name="color-scheme" content="light" />
   <style>
     :root{
-      --bg:#fdf8f4;--card:#fff;--ink:#222;--muted:#666;--ring:#d7c7b6;--shadow:0 4px 12px rgba(0,0,0,.12)
+      --bg:#fdf8f4;--card:#fff;--ink:#222;--muted:#666;--ring:#d7c7b6;--shadow:0 4px 12px rgba(0,0,0,.12);
+      --overlay:rgba(255,255,255,.85)
     }
     *{box-sizing:border-box}
     body{
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple SD Gothic Neo", sans-serif;
       background:var(--bg);margin:0;padding:20px;text-align:center;color:var(--ink);
+      overscroll-behavior:contain;
     }
     .wrap{max-width:960px;margin:0 auto}
     h1{font-size:clamp(1.25rem,2.5vw,1.8rem);margin:0 0 14px;line-height:1.35}
@@ -28,28 +30,33 @@
     .meta-row{display:flex;gap:10px;justify-content:center;align-items:center;font-size:.95rem;color:var(--muted);margin-bottom:6px}
     .pill{border:1px solid #e8e1d8;border-radius:999px;padding:.25rem .6rem;background:#fff}
 
-    .result{margin-top:8px;font-size:1.05rem}
-    .group{margin:10px auto;max-width:600px;text-align:left}
-    .group h3{margin:14px 6px 8px;font-size:1rem;color:#7a6d60;font-weight:700}
-    .guest-item{margin:8px 6px;padding:12px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .floorwrap{position:relative;display:inline-block;max-width:640px;width:100%}
+
+    img.thumb{width:100%;max-width:640px;margin:0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:zoom-in;display:block}
+
+    /* Results overlay over the image */
+    .overlay{position:absolute;left:8px;right:8px;top:8px;max-height:45vh;overflow:auto;padding:8px;border-radius:12px;background:var(--overlay);backdrop-filter:saturate(150%) blur(2px);box-shadow:var(--shadow);text-align:left}
+    .result{font-size:1.05rem}
+    .group{margin:6px 4px}
+    .group h3{margin:8px 6px 6px;font-size:.95rem;color:#7a6d60;font-weight:700}
+    .guest-item{margin:6px 6px;padding:10px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:8px;align-items:center}
     .guest-item strong{color:#444}
     .seat{white-space:nowrap;color:#4e473f;font-weight:600}
     mark{background:#fff0b3;padding:0 .15em;border-radius:.2em}
 
-    img.thumb{width:100%;max-width:640px;margin:18px auto 4px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:zoom-in}
-
-    .hint{font-size:.95rem;font-style:italic;margin:4px 0 14px;font-weight:700}
+    .hint{font-size:.95rem;font-style:italic;margin:8px 0 14px;font-weight:700}
 
     /* Lightbox */
     .lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);justify-content:center;align-items:center;overflow:hidden}
     .lightbox:target{display:flex}
     .lightbox a.close{position:absolute;top:16px;right:20px;font-size:30px;color:#fff;text-decoration:none;z-index:1010}
     .stage{position:relative;width:100%;height:100%;touch-action:none}
-    .stage img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);will-change:transform;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);user-select:none;pointer-events:auto}
+    .stage img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);will-change:transform;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);user-select:none;pointer-events:auto;max-width:90vw;max-height:90vh}
 
     @media (max-width:480px){
       input[type="text"]{font-size:1.1rem}
       .guest-item{font-size:1.05rem}
+      .overlay{max-height:50vh}
     }
   </style>
 </head>
@@ -70,11 +77,13 @@
 
     <div class="hint">*Seats arranged clockwise from the north 🪑</div>
 
-    <!-- Floorplan thumbnail -->
-    <a href="#floorplan"><img class="thumb" src="Seating_Plan.jpg" alt="Wedding floor plan preview"></a>
-
-    <!-- Results region -->
-    <div id="result" class="result" aria-live="polite"></div>
+    <!-- Floorplan thumbnail with overlay results -->
+    <div class="floorwrap">
+      <a href="#floorplan"><img class="thumb" src="Seating_Plan.jpg" alt="Wedding floor plan preview"></a>
+      <div class="overlay" id="overlay" hidden>
+        <div id="result" class="result" aria-live="polite"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Lightbox -->
@@ -85,26 +94,22 @@
     </div>
   </div>
 
-  <script src="guests.js"></script>
-  <script>
-    const guests = window.GUESTS || [];
-
-
-// --- Utilities ------------------------------------------------------
+<script src="guests.js"></script>
+<script>
+const guests = window.GUESTS || [];
 const $ = sel => document.querySelector(sel);
 const resultDiv = $('#result');
+const overlay = $('#overlay');
 const countPill = $('#count');
 const box = $('#searchBox');
 
-// Normalize text (case/diacritics/extra spaces)
 const norm = s => (s||"")
   .toLowerCase()
   .normalize('NFKD')
-  .replace(/[\u0300-\u036f]/g, '') // strip accents
-  .replace(/\s+/g,' ')              // collapse spaces
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/\s+/g,' ')
   .trim();
 
-// Simple Levenshtein distance (capped for speed)
 function editDistance(a,b,max=2){
   if(Math.abs(a.length-b.length)>max) return max+1;
   const dp = new Array(b.length+1);
@@ -120,23 +125,18 @@ function editDistance(a,b,max=2){
   return dp[b.length];
 }
 
-// Highlight matched substring
 function highlight(name, query){
-  const n = name; const q = query;
-  const idx = n.toLowerCase().indexOf(q.toLowerCase());
-  if(idx<0) return n;
-  return n.slice(0,idx)+'<mark>'+n.slice(idx, idx+q.length)+'</mark>'+n.slice(idx+q.length);
+  const idx = name.toLowerCase().indexOf(query.toLowerCase());
+  if(idx<0) return name;
+  return name.slice(0,idx)+'<mark>'+name.slice(idx, idx+query.length)+'</mark>'+name.slice(idx+query.length);
 }
 
-// Group by table number
 function groupByTable(list){
   const map = new Map();
   for(const g of list){
-    const key = g.table;
-    if(!map.has(key)) map.set(key, []);
-    map.get(key).push(g);
+    if(!map.has(g.table)) map.set(g.table, []);
+    map.get(g.table).push(g);
   }
-  // sort tables by number at the end of the string
   return [...map.entries()].sort((a,b)=>{
     const an = parseInt(a[0].match(/(\d+)/)?.[1]||'0',10);
     const bn = parseInt(b[0].match(/(\d+)/)?.[1]||'0',10);
@@ -144,20 +144,16 @@ function groupByTable(list){
   });
 }
 
-// Debounce
 function debounce(fn, wait=120){
   let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),wait)}
 }
 
-// Update count pill
 countPill.textContent = `${guests.length} guests`;
 
-// --- Search ---------------------------------------------------------
 function searchGuest(){
   const q = norm(box.value);
-  if(!q){ resultDiv.innerHTML=''; return; }
+  if(!q){ resultDiv.innerHTML=''; overlay.hidden = true; return; }
 
-  // scoring: 0 exact, 1 starts-with token, 2 includes, 3 fuzzy (<=2 edits)
   const scored = guests.map(g=>{
     const nameN = norm(g.name);
     let score = Infinity;
@@ -171,6 +167,7 @@ function searchGuest(){
 
   if(scored.length===0){
     resultDiv.innerHTML = `<span style="color:#cc0000">No matching names found.</span>`;
+    overlay.hidden = false;
     return;
   }
 
@@ -184,18 +181,17 @@ function searchGuest(){
   }).join('');
 
   resultDiv.innerHTML = html;
+  overlay.hidden = false;
 }
 
 box.addEventListener('input', debounce(searchGuest, 120));
 
-// Support prefill via URL ?q=Name
 (function initFromURL(){
   const params = new URLSearchParams(location.search);
   const q = params.get('q');
   if(q){ box.value = q; searchGuest(); box.focus(); box.select(); }
 })();
 
-// Keep URL in sync (without reload)
 (function syncURL(){
   let last = '';
   box.addEventListener('input', debounce(()=>{
@@ -207,32 +203,77 @@ box.addEventListener('input', debounce(searchGuest, 120));
   }, 200));
 })();
 
-// --- Lightbox pan & zoom (pointer + wheel) --------------------------
+// --- Lightbox pan, pinch-zoom (mobile), wheel (desktop) ---
 (function setupPanZoom(){
   const img = document.getElementById('zoomImg');
-  let scale = 1, tx = 0, ty = 0, dragging = false, sx=0, sy=0;
+  let scale = 1, tx = 0, ty = 0;
+  let dragging = false, sx=0, sy=0;
+  let pointers = new Map();
+
+  const clampScale = (s)=>{
+    const isMobile = matchMedia('(max-width: 768px)').matches;
+    const max = isMobile ? 2 : 4; // 모바일에서 과확대 방지
+    return Math.min(max, Math.max(1, s));
+  };
 
   const apply = ()=>{
     img.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
   };
 
-  img.addEventListener('pointerdown', e=>{
-    e.preventDefault(); dragging=true; img.setPointerCapture(e.pointerId);
-    sx = e.clientX; sy = e.clientY; img.style.cursor='grabbing';
-  });
-  img.addEventListener('pointermove', e=>{
-    if(!dragging) return; tx += (e.clientX - sx); ty += (e.clientY - sy); sx=e.clientX; sy=e.clientY; apply();
-  });
-  const stop = ()=>{ dragging=false; img.style.cursor='grab'; };
-  img.addEventListener('pointerup', stop); img.addEventListener('pointercancel', stop); img.addEventListener('pointerleave', stop);
+  function distance(a,b){ const dx=a.clientX-b.clientX, dy=a.clientY-b.clientY; return Math.hypot(dx,dy); }
+  function midpoint(a,b){ return { x:(a.clientX+b.clientX)/2, y:(a.clientY+b.clientY)/2 }; }
 
-  // Wheel to zoom (desktop)
+  img.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    pointers.set(e.pointerId, e);
+    img.setPointerCapture(e.pointerId);
+    if(pointers.size===1){
+      dragging=true; sx = e.clientX; sy = e.clientY; img.style.cursor='grabbing';
+    }
+  });
+
+  img.addEventListener('pointermove', e=>{
+    if(!pointers.has(e.pointerId)) return;
+    const prev = pointers.get(e.pointerId);
+    pointers.set(e.pointerId, e);
+
+    if(pointers.size===1 && dragging){
+      tx += (e.clientX - sx); ty += (e.clientY - sy); sx=e.clientX; sy=e.clientY; apply();
+    }
+    else if(pointers.size===2){
+      const [p1, p2] = [...pointers.values()];
+      const [q1, q2] = [prev, [...pointers.entries()].find(([id])=>id!==e.pointerId)?.[1] || p2];
+      const before = distance(q1, q2);
+      const after = distance(p1, p2);
+      if(before>0){
+        const factor = after / before;
+        const next = clampScale(scale * factor);
+        const rect = img.getBoundingClientRect();
+        const m = midpoint(p1, p2);
+        const cx = m.x - rect.left - rect.width/2;
+        const cy = m.y - rect.top - rect.height/2;
+        tx -= cx * (next/scale - 1);
+        ty -= cy * (next/scale - 1);
+        scale = next; apply();
+      }
+    }
+  });
+
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    if(pointers.size===0){ dragging=false; img.style.cursor='grab'; }
+  }
+  img.addEventListener('pointerup', endPointer);
+  img.addEventListener('pointercancel', endPointer);
+  img.addEventListener('pointerleave', endPointer);
+
   img.addEventListener('wheel', e=>{
-    e.preventDefault(); const delta = -Math.sign(e.deltaY) * 0.1; const next = Math.min(4, Math.max(1, scale + delta));
+    e.preventDefault();
+    const delta = -Math.sign(e.deltaY) * 0.1;
+    const next = clampScale(scale + delta);
     if(next!==scale){
-      // zoom towards cursor
       const rect = img.getBoundingClientRect();
-      const cx = e.clientX - rect.left - rect.width/2; // relative to center
+      const cx = e.clientX - rect.left - rect.width/2;
       const cy = e.clientY - rect.top - rect.height/2;
       tx -= cx * (next/scale - 1);
       ty -= cy * (next/scale - 1);
@@ -240,12 +281,18 @@ box.addEventListener('input', debounce(searchGuest, 120));
     }
   }, { passive:false });
 
-  // Double-click to toggle zoom
-  img.addEventListener('dblclick', e=>{
-    e.preventDefault(); if(scale===1){ scale=2; } else { scale=1; tx=ty=0; } apply();
+  // Double-tap / double-click to toggle zoom
+  let lastTap = 0;
+  img.addEventListener('click', e=>{
+    const now = Date.now();
+    if(now - lastTap < 300){
+      e.preventDefault();
+      if(scale===1){ scale=1.5; } else { scale=1; tx=ty=0; }
+      apply();
+    }
+    lastTap = now;
   });
 
-  // Reset when closing lightbox
   window.addEventListener('hashchange', ()=>{
     if(location.hash !== '#floorplan'){ scale=1; tx=ty=0; apply(); }
   });
@@ -255,4 +302,3 @@ box.addEventListener('input', debounce(searchGuest, 120));
 </script>
 </body>
 </html>
-
