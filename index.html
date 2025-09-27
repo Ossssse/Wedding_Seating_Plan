@@ -35,8 +35,11 @@
     img.thumb{width:100%;max-width:640px;margin:0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:zoom-in;display:block}
 
     /* Results overlay over the image */
-    .overlay{position:absolute;left:8px;right:8px;top:8px;max-height:45vh;overflow:auto;padding:8px;border-radius:12px;background:var(--overlay);backdrop-filter:saturate(150%) blur(2px);box-shadow:var(--shadow);text-align:left}
-    .result{font-size:1.05rem}
+    .overlay{position:absolute;left:8px;right:8px;top:8px;max-height:45vh;overflow:auto;padding:8px 8px 30px;border-radius:12px;background:var(--overlay);backdrop-filter:saturate(150%) blur(2px);box-shadow:var(--shadow);text-align:left}
+    .overlay .clear-btn{position:absolute;top:6px;right:10px;background:none;border:none;font-size:20px;font-weight:bold;color:#333;cursor:pointer;line-height:1}
+    .overlay .clear-btn:hover{color:#000}
+
+    .result{font-size:1.05rem;margin-top:26px}
     .group{margin:6px 4px}
     .group h3{margin:8px 6px 6px;font-size:.95rem;color:#7a6d60;font-weight:700}
     .guest-item{margin:6px 6px;padding:10px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:8px;align-items:center}
@@ -81,6 +84,7 @@
     <div class="floorwrap">
       <a href="#floorplan"><img class="thumb" src="Seating_Plan.jpg" alt="Wedding floor plan preview"></a>
       <div class="overlay" id="overlay" hidden>
+        <button class="clear-btn" id="clearBtn" aria-label="Clear search">✕</button>
         <div id="result" class="result" aria-live="polite"></div>
       </div>
     </div>
@@ -100,6 +104,7 @@ const guests = window.GUESTS || [];
 const $ = sel => document.querySelector(sel);
 const resultDiv = $('#result');
 const overlay = $('#overlay');
+const clearBtn = $('#clearBtn');
 const countPill = $('#count');
 const box = $('#searchBox');
 
@@ -166,7 +171,7 @@ function searchGuest(){
     .sort((a,b)=> a.score-b.score || a.name.localeCompare(b.name));
 
   if(scored.length===0){
-    resultDiv.innerHTML = `<span style="color:#cc0000">No matching names found.</span>`;
+    resultDiv.innerHTML = `<span style=\"color:#cc0000\">No matching names found.</span>`;
     overlay.hidden = false;
     return;
   }
@@ -175,9 +180,9 @@ function searchGuest(){
   const qRaw = box.value.trim();
   const html = grouped.map(([table, items])=>{
     const itemsHtml = items.map(g=>
-      `<div class="guest-item"><strong>${highlight(g.name, qRaw)}</strong><span class="seat">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
+      `<div class=\"guest-item\"><strong>${highlight(g.name, qRaw)}</strong><span class=\"seat\">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
     ).join('');
-    return `<div class="group"><h3>${table}</h3>${itemsHtml}</div>`;
+    return `<div class=\"group\"><h3>${table}</h3>${itemsHtml}</div>`;
   }).join('');
 
   resultDiv.innerHTML = html;
@@ -185,6 +190,13 @@ function searchGuest(){
 }
 
 box.addEventListener('input', debounce(searchGuest, 120));
+
+clearBtn.addEventListener('click', ()=>{
+  box.value='';
+  resultDiv.innerHTML='';
+  overlay.hidden=true;
+  box.focus();
+});
 
 (function initFromURL(){
   const params = new URLSearchParams(location.search);
@@ -212,7 +224,7 @@ box.addEventListener('input', debounce(searchGuest, 120));
 
   const clampScale = (s)=>{
     const isMobile = matchMedia('(max-width: 768px)').matches;
-    const max = isMobile ? 2 : 4; // 모바일에서 과확대 방지
+    const max = isMobile ? 2 : 4;
     return Math.min(max, Math.max(1, s));
   };
 
@@ -281,7 +293,6 @@ box.addEventListener('input', debounce(searchGuest, 120));
     }
   }, { passive:false });
 
-  // Double-tap / double-click to toggle zoom
   let lastTap = 0;
   img.addEventListener('click', e=>{
     const now = Date.now();
