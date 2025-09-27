@@ -123,11 +123,11 @@ window.GUESTS = [
   { name: "John Carl, Contreras", table: "Table 13", seat: "Seat 8" },
 
   // Table 14
-  { name: "Zoe", table: "Table 14", seat: "Seat 1" },
+  { name: "Zoe Lee", table: "Table 14", seat: "Seat 1" },
   { name: "Sean Lee", table: "Table 14", seat: "Seat 2" },
   { name: "Joey Lee", table: "Table 14", seat: "Seat 3" },
-  { name: "Louis", table: "Table 14", seat: "Seat 4" },
-  { name: "Spencer", table: "Table 14", seat: "Seat 5" },
+  { name: "Louis Tin", table: "Table 14", seat: "Seat 4" },
+  { name: "Spencer Tin", table: "Table 14", seat: "Seat 5" },
 
   // Table 15
   { name: "Jevan McGowan", table: "Table 15", seat: "Seat 1" },
