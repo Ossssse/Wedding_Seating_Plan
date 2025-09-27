@@ -89,7 +89,7 @@
       </div>
     </div>
       <p style=\"font-size:0.95rem; color:#555; margin-top:6px;\">Tap the image to enlarge</p>
-      <p style=\"font-size:0.95rem; color:#555; margin-top:2px;\">이미지를 클릭하면 크게 보실 수 있어요</p>
+      <p style=\"font-size:0.95rem; color:#555; margin-top:2px;\">이미지를 클릭하시면 확대하실 수 있어요</p>
   </div>
 
   <!-- Lightbox -->
@@ -226,7 +226,7 @@ clearBtn.addEventListener('click', ()=>{
 
   const clampScale = (s)=>{
     const isMobile = matchMedia('(max-width: 768px)').matches;
-    const max = isMobile ? 2 : 4;
+    const max = isMobile ? 3 : 5;
     return Math.min(max, Math.max(1, s));
   };
 
@@ -315,6 +315,7 @@ clearBtn.addEventListener('click', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
