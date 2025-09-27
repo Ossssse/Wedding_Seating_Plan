@@ -106,9 +106,10 @@ const guests = window.GUESTS || [];
 const $ = sel => document.querySelector(sel);
 const resultDiv = $('#result');
 const overlay = $('#overlay');
-const clearBtn = $('#clearBtn');
+const clearBtn = $('#clearBtn');           // 오버레이 X
 const countPill = $('#count');
 const box = $('#searchBox');
+const clearInlineBtn = $('#clearInput');   // 입력창 옆 Clear
 
 const norm = s => (s||"")
   .toLowerCase()
@@ -159,7 +160,14 @@ countPill.textContent = `${guests.length} guests`;
 
 function searchGuest(){
   const q = norm(box.value);
-  if(!q){ resultDiv.innerHTML=''; overlay.hidden = true; return; }
+  if(!q){
+    resultDiv.innerHTML='';
+    overlay.hidden = true;
+    if (clearInlineBtn) clearInlineBtn.classList.remove('show'); // 입력 비었을 때 버튼 숨김
+    return;
+  }
+
+  if (clearInlineBtn) clearInlineBtn.classList.add('show');      // 입력 있을 때 버튼 노출
 
   const scored = guests.map(g=>{
     const nameN = norm(g.name);
@@ -173,7 +181,7 @@ function searchGuest(){
     .sort((a,b)=> a.score-b.score || a.name.localeCompare(b.name));
 
   if(scored.length===0){
-    resultDiv.innerHTML = `<span style=\"color:#cc0000\">No matching names found.</span>`;
+    resultDiv.innerHTML = `<span style="color:#cc0000">No matching names found.</span>`;
     overlay.hidden = false;
     return;
   }
@@ -182,9 +190,9 @@ function searchGuest(){
   const qRaw = box.value.trim();
   const html = grouped.map(([table, items])=>{
     const itemsHtml = items.map(g=>
-      `<div class=\"guest-item\"><strong>${highlight(g.name, qRaw)}</strong><span class=\"seat\">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
+      `<div class="guest-item"><strong>${highlight(g.name, qRaw)}</strong><span class="seat">🍽️ ${g.table}, 🪑 ${g.seat}</span></div>`
     ).join('');
-    return `<div class=\"group\"><h3>${table}</h3>${itemsHtml}</div>`;
+    return `<div class="group"><h3>${table}</h3>${itemsHtml}</div>`;
   }).join('');
 
   resultDiv.innerHTML = html;
@@ -193,12 +201,21 @@ function searchGuest(){
 
 box.addEventListener('input', debounce(searchGuest, 120));
 
-clearBtn.addEventListener('click', ()=>{
+function clearSearch(){
   box.value='';
   resultDiv.innerHTML='';
   overlay.hidden=true;
+  if (clearInlineBtn) clearInlineBtn.classList.remove('show');
+  // URL의 ?q 제거
+  const url = new URL(location);
+  url.searchParams.delete('q');
+  history.replaceState({}, '', url);
   box.focus();
-});
+}
+
+clearBtn.addEventListener('click', clearSearch);                  // 오버레이 X
+if (clearInlineBtn) clearInlineBtn.addEventListener('click', clearSearch); // 입력창 Clear
+box.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ e.preventDefault(); clearSearch(); } });
 
 (function initFromURL(){
   const params = new URLSearchParams(location.search);
@@ -226,7 +243,7 @@ clearBtn.addEventListener('click', ()=>{
 
   const clampScale = (s)=>{
     const isMobile = matchMedia('(max-width: 768px)').matches;
-    const max = isMobile ? 3 : 5;
+    const max = isMobile ? 3 : 5;   // 최대 배율 (모바일/데스크탑)
     return Math.min(max, Math.max(1, s));
   };
 
@@ -315,6 +332,7 @@ clearBtn.addEventListener('click', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
