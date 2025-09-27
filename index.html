@@ -1,106 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  <title>Wedding Seating Plan</title>
-  <meta name="color-scheme" content="light" />
-  <style>
-    :root{
-      --bg:#fdf8f4;--card:#fff;--ink:#222;--muted:#666;--ring:#d7c7b6;--shadow:0 4px 12px rgba(0,0,0,.12);
-      --overlay:rgba(255,255,255,.85)
-    }
-    *{box-sizing:border-box}
-    body{
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple SD Gothic Neo", sans-serif;
-      background:var(--bg);margin:0;padding:20px;text-align:center;color:var(--ink);
-      overscroll-behavior:contain;
-    }
-    .wrap{max-width:960px;margin:0 auto}
-    h1{font-size:clamp(1.25rem,2.5vw,1.8rem);margin:0 0 14px;line-height:1.35}
-    p.lead{margin:0 0 16px;color:var(--muted)}
-    .searchbar{display:flex;gap:8px;justify-content:center;align-items:center;margin:12px 0 10px}
-    .clear-inline{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #e5e1db;border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}
-    .clear-inline input{border:none;outline:none;font-size:1.1rem}
-    .btn-clear{display:none;margin-left:6px;border:none;background:#f1ebe5;color:#4b4239;border-radius:8px;padding:6px 10px;font-size:.95rem;cursor:pointer}
-    .btn-clear.show{display:inline-block}
-    label{position:absolute;clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;white-space:nowrap;width:1px}
-    input[type="text"]{
-      padding:12px 14px;font-size:1.1rem;width:min(90%,480px);border-radius:12px;border:1px solid #ccc;outline:none;
-      box-shadow:var(--shadow);transition:border-color .15s ease;
-    }
-    input[type="text"]:focus{border-color:var(--ring)}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Wedding Seating Plan</title>
+<meta name="color-scheme" content="light" />
+<style>
+:root{
+--bg:#fdf8f4;--card:#fff;--ink:#222;--muted:#666;--ring:#d7c7b6;--shadow:0 4px 12px rgba(0,0,0,.12);
+--overlay:rgba(255,255,255,.85)
+}
+*{box-sizing:border-box}
+body{
+font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple SD Gothic Neo", sans-serif;
+background:var(--bg);margin:0;padding:20px;text-align:center;color:var(--ink);
+overscroll-behavior:contain;
+}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-size:clamp(1.25rem,2.5vw,1.8rem);margin:0 0 14px;line-height:1.35}
+.searchbar{display:flex;gap:8px;justify-content:center;align-items:center;margin:12px 0 10px}
+.clear-inline{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #e5e1db;border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}
+.clear-inline input{border:none;outline:none;font-size:1.1rem}
+.btn-clear{display:none;margin-left:6px;border:none;background:#f1ebe5;color:#4b4239;border-radius:8px;padding:6px 10px;font-size:.95rem;cursor:pointer}
+.btn-clear.show{display:inline-block}
 
-    .meta-row{display:flex;gap:10px;justify-content:center;align-items:center;font-size:.95rem;color:var(--muted);margin-bottom:6px}
-    .pill{border:1px solid #e8e1d8;border-radius:999px;padding:.25rem .6rem;background:#fff}
 
-    .floorwrap{position:relative;display:inline-block;max-width:640px;width:100%}
+.floorwrap{position:relative;display:inline-block;max-width:640px;width:100%}
 
-    img.thumb{width:100%;max-width:640px;margin:0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:zoom-in;display:block}
 
-    /* Results overlay over the image */
-    .overlay{position:absolute;left:8px;right:8px;top:8px;max-height:45vh;overflow:auto;padding:8px 8px 30px;border-radius:12px;background:var(--overlay);backdrop-filter:saturate(150%) blur(2px);box-shadow:var(--shadow);text-align:left}
-    .overlay .clear-btn{position:absolute;top:6px;right:10px;background:none;border:none;font-size:20px;font-weight:bold;color:#333;cursor:pointer;line-height:1}
-    .overlay .clear-btn:hover{color:#000}
+img.thumb{width:100%;max-width:640px;margin:0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:zoom-in;display:block}
 
-    .result{font-size:1.05rem;margin-top:26px}
-    .group{margin:6px 4px}
-    .group h3{margin:8px 6px 6px;font-size:.95rem;color:#7a6d60;font-weight:700}
-    .guest-item{margin:6px 6px;padding:10px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:8px;align-items:center}
-    .guest-item strong{color:#444}
-    .seat{white-space:nowrap;color:#4e473f;font-weight:600}
-    mark{background:#fff0b3;padding:0 .15em;border-radius:.2em}
 
-    .hint{font-size:.95rem;font-style:italic;margin:8px 0 14px;font-weight:700}
+.overlay{position:absolute;left:8px;right:8px;top:8px;max-height:45vh;overflow:auto;padding:8px 8px 30px;border-radius:12px;background:var(--overlay);backdrop-filter:saturate(150%) blur(2px);box-shadow:var(--shadow);text-align:left}
+.overlay .clear-btn{position:absolute;top:6px;right:10px;background:none;border:none;font-size:24px;font-weight:bold;color:#333;cursor:pointer;line-height:1}
+.overlay .clear-btn:hover{color:#000}
 
-    /* Lightbox */
-    .lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);justify-content:center;align-items:center;overflow:hidden}
-    .lightbox:target{display:flex}
-    .lightbox a.close{position:absolute;top:16px;right:20px;font-size:30px;color:#fff;text-decoration:none;z-index:1010}
-    .stage{position:relative;width:100%;height:100%;touch-action:none}
-    .stage img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);will-change:transform;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);user-select:none;pointer-events:auto;max-width:90vw;max-height:90vh}
 
-    @media (max-width:480px){
-      input[type="text"]{font-size:1.1rem}
-      .guest-item{font-size:1.05rem}
-      .overlay{max-height:50vh}
-    }
-  </style>
+.result{font-size:1.05rem;margin-top:26px}
+.group{margin:6px 4px}
+.group h3{margin:8px 6px 6px;font-size:.95rem;color:#7a6d60;font-weight:700}
+.guest-item{margin:6px 6px;padding:10px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.guest-item strong{color:#444}
+.seat{white-space:nowrap;color:#4e473f;font-weight:600}
+mark{background:#fff0b3;padding:0 .15em;border-radius:.2em}
+
+
+.hint{font-size:.95rem;font-style:italic;margin:8px 0 14px;font-weight:700}
+
+
+.lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);justify-content:center;align-items:center;overflow:hidden}
+.lightbox:target{display:flex}
+.lightbox a.close{position:absolute;top:16px;right:20px;font-size:30px;color:#fff;text-decoration:none;z-index:1010}
+.stage{position:relative;width:100%;height:100%;touch-action:none}
+.stage img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);will-change:transform;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);user-select:none;pointer-events:auto;max-width:90vw;max-height:90vh}
+
+
+@media (max-width:480px){
+input[type="text"]{font-size:1.1rem}
+.guest-item{font-size:1.05rem}
+.overlay{max-height:50vh}
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Wedding Seating Plan 👰❤️🤵</h1>
-
-    <div class="searchbar">
-      <div class="clear-inline">
-        <label for="searchBox">Search your name</label>
-        <input id="searchBox" type="text" inputmode="text" autocomplete="name" placeholder="Enter your name…" aria-controls="result" aria-autocomplete="list" aria-describedby="help" autofocus />
-        <button id="clearInput" class="btn-clear" type="button" aria-label="Clear search">Clear</button>
-      </div>
-    </div>
+<div class="wrap">
+<h1>Wedding Seating Plan 👰❤️🤵</h1>
 
 
-    <div class="hint">*Seats arranged clockwise from the north 🪑</div>
+<div class="searchbar">
+<div class="clear-inline">
+<label for="searchBox">Search your name</label>
+<input id="searchBox" type="text" inputmode="text" autocomplete="name" placeholder="Enter your name…" aria-controls="result" aria-autocomplete="list" autofocus />
+<button id="clearInput" class="btn-clear" type="button" aria-label="Clear search">Clear</button>
+</div>
+</div>
 
-    <!-- Floorplan thumbnail with overlay results -->
-    <div class="floorwrap">
-      <a href="#floorplan"><img class="thumb" src="Seating_Plan.jpg" alt="Wedding floor plan preview"></a>
-      <div class="overlay" id="overlay" hidden>
-        <button class="clear-btn" id="clearBtn" aria-label="Clear search">✕</button>
-        <div id="result" class="result" aria-live="polite"></div>
-      </div>
-    </div>
-      <p style=\"font-size:0.95rem; color:#555; margin-top:6px;\">Tap the image to enlarge</p>
-      <p style=\"font-size:0.95rem; color:#555; margin-top:2px;\">이미지를 클릭하시면 확대하실 수 있어요</p>
-  </div>
 
-  <!-- Lightbox -->
-  <div id="floorplan" class="lightbox" role="dialog" aria-modal="true" aria-label="Floor plan zoom">
-    <a class="close" href="#" aria-label="Close">✕</a>
-    <div class="stage">
-      <img id="zoomImg" src="Seating_Plan.jpg" alt="Wedding floor plan large">
-    </div>
-  </div>
+<div class="hint">*Seats arranged clockwise from the north 🪑</div>
+
+
+<div class="floorwrap">
+<a href="#floorplan"><img class="thumb" src="Seating_Plan.jpg" alt="Wedding floor plan preview"></a>
+<p style="font-size:0.95rem; color:#555; margin-top:6px;">Tap the image to enlarge</p>
+<p style="font-size:0.95rem; color:#555; margin-top:2px;">이미지를 클릭하시면 확대하실 수 있어요</p>
+<div class="overlay" id="overlay" hidden>
+<button class="clear-btn" id="clearBtn" aria-label="Clear search">✕</button>
+<div id="result" class="result" aria-live="polite"></div>
+</div>
+</div>
+</div>
+
+
+<div id="floorplan" class="lightbox" role="dialog" aria-modal="true" aria-label="Floor plan zoom">
+<a class="close" href="#" aria-label="Close">✕</a>
+<div class="stage">
+<img id="zoomImg" src="Seating_Plan.jpg" alt="Wedding floor plan large">
+</div>
+</div>
 
 <script src="guests.js"></script>
 <script>
