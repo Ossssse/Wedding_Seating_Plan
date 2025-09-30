@@ -98,11 +98,12 @@ window.GUESTS = [
   // Table 11
   { name: "Hahnul Ku", table: "Table 11", seat: "Seat 1" },
   { name: "Doyeon Oh", table: "Table 11", seat: "Seat 2" },
-  { name: "Sungmin Kang", table: "Table 11", seat: "Seat 3" },
-  { name: "Hyejin Nam", table: "Table 11", seat: "Seat 4" },
-  { name: "Youna Oh", table: "Table 11", seat: "Seat 5" },
-  { name: "Euido Jeong", table: "Table 11", seat: "Seat 6" },
-  { name: "Donghyeon Ku", table: "Table 11", seat: "Seat 7" },
+  { name: "Euido Jeong", table: "Table 11", seat: "Seat 3" },
+  { name: "Youna Oh", table: "Table 11", seat: "Seat 4" },
+  { name: "Hyejin Nam", table: "Table 11", seat: "Seat 5" },
+  { name: "Sungmin Kang", table: "Table 11", seat: "Seat 6" },
+  { name: "Daniel Cho", table: "Table 11", seat: "Seat 7" },
+  { name: "Donghyeon Ku", table: "Table 11", seat: "Seat 8" },
 
   // Table 12
   { name: "James Kim", table: "Table 12", seat: "Seat 1" },
@@ -111,6 +112,8 @@ window.GUESTS = [
   { name: "Joeun Kim", table: "Table 12", seat: "Seat 4" },
   { name: "Andy Moon", table: "Table 12", seat: "Seat 5" },
   { name: "Youngbin Nam", table: "Table 12", seat: "Seat 6" },
+  { name: "Junyoung Moon", table: "Table 12", seat: "Seat 7" },
+  { name: "Naomi Lee", table: "Table 12", seat: "Seat 8" },  
 
   // Table 13
   { name: "Caelan Mathews", table: "Table 13", seat: "Seat 1" },
@@ -162,9 +165,8 @@ window.GUESTS = [
   { name: "Kyongho Kim", table: "Table 18", seat: "Seat 1" },
   { name: "Karam Hyun", table: "Table 18", seat: "Seat 2" },
   { name: "Mike Choi", table: "Table 18", seat: "Seat 3" },
-  { name: "Junyoung Moon", table: "Table 18", seat: "Seat 4" },
-  { name: "Minseob Shin", table: "Table 18", seat: "Seat 5" },
-  { name: "Woosung Shim", table: "Table 18", seat: "Seat 6" },
-  { name: "Jongwon Noh", table: "Table 18", seat: "Seat 7" },
-  { name: "Min Sei Choi", table: "Table 18", seat: "Seat 8" }
+  { name: "Minseob Shin", table: "Table 18", seat: "Seat 4" },
+  { name: "Woosung Shim", table: "Table 18", seat: "Seat 5" },
+  { name: "Jongwon Noh", table: "Table 18", seat: "Seat 6" },
+  { name: "Min Sei Choi", table: "Table 18", seat: "Seat 7" }
 ]; 
